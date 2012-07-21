@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html ng-app>
+<head>
+	<meta charset="UTF-8">
+	<style>
+		table#boss {
+			empty-cells:show;
+		}
+		td.front {
+			width: 40px;
+			height: 40px;
+		}
+		td.selected- {
+			display: none;
+		}
+		td.selected-true {
+			background-color: brown;
+		}
+	</style>
+	<script type="text/javascript" src="angular-1.0.1.min.js"></script>
+	<script type="text/javascript" src="bossctrl.js"> </script>
+	<title>Boss game implemented using AnglarJS</title>
+</head>
+<body>
+	<div ng-controller="BossCtrl">
+		<table id="boss" border="1" cellspacing="0">
+			<tr ng-repeat="row in matrix">
+				<td class="front selected-{{cell}}" ng-repeat="cell in row" ng-click="toggle(this)"></td>
+			</tr>
+		</table>
+		<div>{{'Clicked ' + count + ' times.'}}</div>
+		<div>{{finished()}}</div>
+	</div>
+</body>
+</html>
