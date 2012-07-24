@@ -10,6 +10,13 @@
 			width: 40px;
 			height: 40px;
 			cursor: pointer;
+			text-align: center;
+		}
+		td.front>span.index.hidden {
+			display: none;
+		}
+		td.front>span.index.show {
+			display: block;
 		}
 		td.selected- {
 			display: none;
@@ -26,11 +33,17 @@
 	<div ng-controller="BossCtrl">
 		<table id="boss" border="1" cellspacing="0">
 			<tr ng-repeat="row in matrix">
-				<td class="front selected-{{cell}}" ng-repeat="cell in row" ng-click="toggle(this)"></td>
+				<td class="front selected-{{cell}}" ng-repeat="cell in row" ng-click="toggle(this)"><span ng-class="indexState" class="index">{{(4 * (this.$parent.$index - 1)) + this.$index - 1}}</span></td>
 			</tr>
 		</table>
 		<div>{{'Clicked ' + count + ' times.'}}</div>
 		<div>{{finished()}}</div>
+		<button ng-click="solve()" value="Solve it!">Solve it!</button>
+		<ul>
+			<li ng-repeat="pat in pattern">
+			  {{pat}}
+			</li>
+		</ul>
 	</div>
 </body>
 </html>

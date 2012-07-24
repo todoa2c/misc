@@ -22,29 +22,78 @@ function BossCtrl($scope) {
     matrix[3][3] = true;
     $scope.matrix = matrix;
     $scope.count = 0;
+    $scope.indexState = 'hidden';
 
-    $scope.finished = function() {
+    var isFinished = function(matrix) {
         for (var i = 1; i < 5; i++) {
             for (var j = 1; j < 5; j++) {
                 if (matrix[i][j]) {
-                    return "";
+                    return false;
                 }
             }
         }
-        return "Finished!";
+        return true;
+    };
+
+    $scope.finished = function() {
+        if (isFinished(matrix)) {
+           return "Finished!";
+        } else {
+            return "";
+        }
     }
 
-    $scope.toggle = function(cell) {
-         var col = cell.$index;
-         var row = cell.$parent.$index;
+    var invert = function(matrix, row, col) {
          matrix[row][col] = !matrix[row][col];
          matrix[row - 1][col] = !matrix[row - 1][col];
          matrix[row][col - 1] = !matrix[row][col - 1];
          matrix[row + 1][col] = !matrix[row + 1][col];
          matrix[row][col + 1] = !matrix[row][col + 1];
+    };
+
+    $scope.toggle = function(cell) {
+         var col = cell.$index;
+         var row = cell.$parent.$index;
+         invert(matrix, row, col);
          hideEdge();
          $scope.count++;
          console.log('clicked row: ' + row + ', col: ' + col);
     }
+
+    $scope.solve = function() {
+        var pattern = 0;
+        while(true) {
+            var patList = [];
+            var temp = pattern;
+            while (temp >= 16) {
+                var mod = temp % 16;
+                patList.push(mod);
+                temp = ((temp - mod) / 16) - 1;
+            }
+            patList.push(temp);
+            var copy = angular.copy(matrix);
+            var result = trySolve(copy, patList);
+            if (result) {
+                console.log(pattern + ' : ' + JSON.stringify(patList) + ' => ' + result);
+                $scope.pattern = [];
+                for (var i = 0; i < patList.length; i++) {
+                    $scope.pattern = patList.sort();
+                }
+                $scope.indexState = 'show';
+                break;
+            }
+            pattern++;
+        }
+    }
+
+    var trySolve = function(matrix, patList) {
+        for (var i = 0; i < patList.length; i++) {
+            var pat = patList[i];
+            var row = Math.floor(pat / 4) + 1;
+            var col = (pat % 4) + 1;
+            invert(matrix, row, col);
+        }
+        return isFinished(matrix);
+    };
 }
 
