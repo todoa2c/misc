@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script src="534.js"></script>
+		<script type="text/javascript">
+			if (!console) {
+				console = {};
+				console.log = function(m) {
+				};
+			}
+			$(document).ready(function() {
+				$('#start').click(function(e) {
+					$('#msg').text("The shortest answer is...");
+					$('#result').empty();
+					var res = main();
+					res.forEach(function(r) {
+						$('#result').append('<li>' + r + '</li>');
+					});
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<button id="start">Start</button>
+		<div id="msg"></div>
+		<ol id="result"></ol>
+	</body>
+</html>
