@@ -41,7 +41,7 @@ function BossCtrl($scope) {
         } else {
             return "";
         }
-    }
+    };
 
     var invert = function(matrix, row, col) {
          matrix[row][col] = !matrix[row][col];
@@ -65,37 +65,33 @@ function BossCtrl($scope) {
     };
 
     $scope.solve = function() {
-        var pattern = 0;
         var start = new Date();
-        while(true) {
+        var solvedList = [];
+        for (var pattern = 0; pattern < 65536; pattern++) {
+            var copy = angular.copy(matrix);
             var patList = [];
-            var temp = pattern;
-            while (temp >= 16) {
-                var mod = temp % 16;
-                patList.push(mod);
-                temp = ((temp - mod) / 16) - 1;
-            }
-            patList.push(temp);
-
-            if (!hasDuplicatedPattern(patList)) {
-                var copy = angular.copy(matrix);
-                var result = trySolve(copy, patList);
-                if (result) {
-                    console.log(pattern + ' : ' + JSON.stringify(patList) + ' => ' + result);
-                    $scope.pattern = [];
-                    for (var i = 0; i < patList.length; i++) {
-                        $scope.pattern = patList.sort(sortByOrder);
-                    }
-                    var stop = new Date();
-                    console.log('time = ' + (stop.getTime() - start.getTime()) + ' [ms]');
-                    $scope.indexState = 'show';
-                    break;
+            var p = pattern;
+            for (var i = 0; i < 16; i++) {
+                if (p & 0x1) {
+                    patList.push(i);
                 }
-            } else {
-                //console.log('DUPLICATED: ' + pattern + ' : ' + JSON.stringify(patList));
+                p = p >> 1;
             }
-            pattern++;
+            var result = trySolve(copy, patList);
+            if (result) {
+                solvedList[patList.length] = patList;
+            }
         }
+
+        for (var minPattern = 0; minPattern < solvedList.length; minPattern++) {
+            if (solvedList[minPattern]) {
+                $scope.pattern = solvedList[minPattern].sort(sortByOrder);
+                $scope.indexState = 'show';
+                break;
+            }
+        }
+        var stop = new Date();
+        console.log('time = ' + (stop.getTime() - start.getTime()) + ' [ms]');
     };
 
     var hasDuplicatedPattern = function(patList) {
